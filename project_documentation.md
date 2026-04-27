@@ -104,48 +104,6 @@ Maps Lyfta's `exercise_image` URL substrings to muscle groups:
 
 ---
 
-## Current File Structure
-
-```
-ascend-web/
-├── src/
-│   ├── app/
-│   │   ├── page.js          # Main server component: data fetching, harmonization, JSX layout
-│   │   ├── layout.js        # Root layout with Inter font
-│   │   └── globals.css      # Full design system + component styles
-│   └── components/
-│       └── MuscleMap.js     # Client component for react-body-highlighter SVG models
-├── public/
-│   └── ascend_logo.png      # App logo (header)
-└── .env.local               # API keys (not committed)
-```
-
----
-
-## Environment Variables Required
-
-```
-STRAVA_CLIENT_ID=
-STRAVA_CLIENT_SECRET=
-STRAVA_ACCESS_TOKEN=
-STRAVA_REFRESH_TOKEN=
-LYFTA_API_KEY=
-```
-
----
-
-## Known Limitations & Future Roadmap
-
-| 🔴 High | Auto token refresh | Strava access tokens expire every 6 hours; need a server-side refresh cron or middleware |
-| 🔴 High | Strava rate limiting | Fetching `DetailedActivity` per workout will hit limits as history grows; implement file-based or Redis cache |
-| 🟡 Medium | Nutrition data | Currently mocked; integrate MyFitnessPal or FatSecret API |
-| 🟡 Medium | Greeting time-awareness | "Good Morning" should dynamically change to "Good Afternoon/Evening" based on local time |
-| 🟡 Medium | More workouts | Currently shows top 3 only; add pagination or a "Load More" button |
-| 🟢 Low | Webhooks | Replace polling with Strava/Lyfta webhook push notifications for real-time updates |
-| 🟢 Low | Historical analytics | Weekly/monthly volume charts using Recharts or Chart.js |
-
----
-
 ## Session 4: Final Polish & Production Deployment
 *April 26, 2026 • 22:23*
 
@@ -178,3 +136,123 @@ vercel --prod --yes
 - [x] Increased muscle map silhouette contrast.
 - [x] Deployed live production URL on Vercel.
 - [x] Documented full development journey in `ascend-web/project_documentation.md`.
+
+---
+
+## Session 5: Git Workflow, Cross-Device Credentials & AI Performance Insights
+*April 27, 2026 • 21:00*
+
+**Goal:** Establish a professional development workflow with version control, enable seamless work across personal and work laptops, and transform the static AI Insights section into a real, data-driven coaching experience.
+
+### Git & GitHub Setup
+- Initialized a remote GitHub repository at **[github.com/zulkhairee/ascend](https://github.com/zulkhairee/ascend)**.
+- Set up SSH key authentication on the local machine (`~/.ssh/id_ed25519`) to avoid HTTPS token prompts.
+- Established a clean commit history covering all prior sessions.
+
+### Cross-Device Credential System
+The `.env.local` file is intentionally excluded from GitHub (via `.gitignore`). To allow easy machine-to-machine transfer of API keys without risking public exposure, a two-part system was built:
+
+**`CREDENTIALS_BACKUP.md`** (local-only, also in `.gitignore`):
+A human-readable markdown file containing all API keys. To use the app on a new machine, simply drag-and-drop this file into the project root. It is never committed to git.
+
+**`src/lib/env.js`** — Smart Credential Loader:
+A utility function `getEnv(key)` that:
+1. First checks `process.env` (standard `.env.local` via Next.js)
+2. If missing, falls back to parsing `CREDENTIALS_BACKUP.md` using regex
+3. This means the app works on any machine where either file is present
+
+```js
+// Usage in server components / API routes
+import { getEnv } from '../lib/env';
+const token = getEnv('STRAVA_ACCESS_TOKEN');
+```
+
+### Strava Token Fix
+Strava access tokens expire every **6 hours**. The token in `.env.local` was stale, causing the Strava data to silently fail. Fixed by:
+1. Using the `STRAVA_REFRESH_TOKEN` to call `POST /oauth/token` and obtain a fresh access token.
+2. Updating `.env.local` and `CREDENTIALS_BACKUP.md` with the new token.
+
+> **Future work**: Automate this refresh using a Next.js middleware or scheduled cron.
+
+### AI Performance Insights — Architecture Evolution
+
+The AI Insights section went through three design iterations:
+
+#### Iteration 1: Blocking Server-Side Call (Removed)
+- Gemini API was called directly inside the `Home` server component.
+- **Problem**: The entire page blocked until Gemini responded (~5–10 seconds of blank screen).
+
+#### Iteration 2: Async API Route + Client-Side Fetch
+- Created `src/app/api/insights/route.js` — a dedicated Next.js Route Handler.
+- Created `src/components/InsightsPanel.js` — a `'use client'` component that fetches from the API route on mount.
+- **Result**: Page renders instantly; the Insights section shows an animated shimmer skeleton, then swaps in the AI text when ready.
+- Added CSS `@keyframes shimmer` skeleton loader for a premium loading experience.
+
+#### Iteration 3: Antigravity-Assisted Static Insights (Current)
+- **Problem**: Gemini API free tier quota was exhausted; `gemini-1.5-flash` model name was also deprecated.
+- **Solution**: Replace live API calls with a static `src/data/ai_insight.json` file.
+- The workflow:
+  1. On request, Antigravity fetches the latest Strava and Lyfta data live.
+  2. Antigravity analyzes the data and generates a coaching insight.
+  3. The insight is written to `ai_insight.json` and committed to GitHub.
+  4. The API route simply reads and serves this static file — near-zero latency, no external dependency.
+
+**Current insight (as of Apr 27, 2026):**
+> *"Your strength is trending upward — your Arms session on Apr 23 hit 5,665 kg total volume, up 15.6% from your Apr 15 session at 4,892 kg. On the cardio side, both your 7 km run and 11.72 km trail run averaged over 175 bpm — consider adding a Zone 2 easy run this week. Consistency is your strongest asset right now; just make sure you're getting enough sleep to let it all compound."*
+
+### Updated File Structure
+```
+ascend-web/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── insights/
+│   │   │       └── route.js      # Serves AI insight from static JSON
+│   │   ├── page.js               # Main server component (data fetching + layout)
+│   │   ├── layout.js             # Root layout with Inter font
+│   │   └── globals.css           # Full design system + shimmer skeleton styles
+│   ├── components/
+│   │   ├── MuscleMap.js          # Client component: SVG muscle heatmap
+│   │   └── InsightsPanel.js      # Client component: async AI insights with skeleton loader
+│   ├── data/
+│   │   └── ai_insight.json       # Static AI coaching analysis (updated by Antigravity)
+│   └── lib/
+│       └── env.js                # Smart credential loader (env.local → CREDENTIALS_BACKUP.md fallback)
+├── public/
+│   └── ascend_logo.png
+├── CREDENTIALS_BACKUP.md         # Local-only API key backup (gitignored)
+├── implementation_plan.md        # Living technical roadmap
+└── .env.local                    # API keys (gitignored)
+```
+
+---
+
+## Environment Variables Required
+
+```
+STRAVA_CLIENT_ID=
+STRAVA_CLIENT_SECRET=
+STRAVA_ACCESS_TOKEN=
+STRAVA_REFRESH_TOKEN=
+LYFTA_API_KEY=
+GEMINI_API_KEY=          # Optional — only needed if switching back to live Gemini API
+```
+
+All keys can be supplied via `.env.local` or `CREDENTIALS_BACKUP.md` (drag-and-drop to project root on new machine).
+
+---
+
+## Known Limitations & Future Roadmap
+
+| Priority | Item | Notes |
+|---|---|---|
+| 🔴 High | Auto token refresh | Strava tokens expire every 6 hours; implement middleware to call refresh endpoint automatically |
+| 🔴 High | Strava rate limiting | DetailedActivity fetch per workout will hit limits as history grows; add file-based or Redis cache |
+| 🟡 Medium | AI Insights automation | Currently manual; consider scheduling a daily GitHub Action to fetch data and regenerate `ai_insight.json` |
+| 🟡 Medium | Nutrition data | Currently mocked; integrate MyFitnessPal, Cronometer, or FatSecret API |
+| 🟡 Medium | Greeting time-awareness | "Good Morning" should dynamically change based on local time |
+| 🟡 Medium | More workouts | Currently shows top 3 only; add pagination or "Load More" |
+| 🟡 Medium | Nutrition × AI integration | Future: AI insights will also incorporate daily food intake and macro adherence |
+| 🟢 Low | Webhooks | Replace polling with Strava/Lyfta webhook push notifications |
+| 🟢 Low | Historical analytics | Weekly/monthly volume charts using Recharts or Chart.js |
+| 🟢 Low | Zone 2 vs threshold tagging | Auto-classify runs by HR zone for more specific coaching |
