@@ -1,49 +1,710 @@
+/* Reset & Base Variables */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+    /* Color Palette */
+    --bg-primary: #FFFFFF;
+    --text-primary: #1F2937; /* Charcoal */
+    --text-secondary: #64748B; /* Slate Gray */
+    --text-tertiary: #94A3B8;
+    
+    /* Accents */
+    --accent-teal: #14B8A6; /* Soft Teal */
+    --accent-teal-glow: rgba(20, 184, 166, 0.4);
+    --accent-navy: #1E3A8A; /* Deep Navy */
+    --accent-slate: #475569;
+    
+    /* Status Gradients */
+    --status-green: #10B981;
+    --status-yellow: #F59E0B;
+    --status-red: #EF4444;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    /* Borders & Surfaces */
+    --border-subtle: #E2E8F0;
+    --bg-surface: #F8FAFC; /* Very light slate for cards */
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03);
+    --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+body {
+    background-color: #F1F5F9; /* Slight off-white background to distinct phone container */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Simulate a Mobile Screen Container */
+.app-container {
+    background-color: var(--bg-primary);
+    width: 100%;
+    max-width: 414px; /* iPhone Max width */
+    height: 896px; /* iPhone Max height */
+    overflow-y: auto;
+    border-radius: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    padding: 40px 24px 40px;
+    position: relative;
+    scrollbar-width: none;
+}
+.app-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Typography & Layout Spacing */
+.section {
+    margin-bottom: 32px;
+}
+
+.section-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* 1. Header & Input */
+.header-section {
+    margin-bottom: 36px;
+}
+.greeting-area {
+    margin-bottom: 24px;
+}
+.app-brand-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.app-logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent-navy);
+}
+.logo-icon-img {
+    width: 28px;
+    height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    object-fit: contain;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: block;
+}
+.brand-name {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+}
+.date {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.greeting {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-primary);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 20px; /* Pill shape */
+    padding: 4px 8px;
+    box-shadow: var(--shadow-inner);
+    transition: border-color 0.2s ease;
+}
+.input-wrapper:focus-within {
+    border-color: var(--text-secondary);
+}
+.icon {
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+.mic-icon {
+    margin-left: 12px;
+}
+.bubble-icon {
+    color: var(--bg-primary);
+    width: 16px;
+    height: 16px;
+}
+.log-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+}
+.log-input::placeholder {
+    color: var(--text-tertiary);
+}
+.icon-btn {
+    background-color: var(--text-primary);
+    border: none;
+    border-radius: 14px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 2. Daily Nutrition Dashboard */
+.nutrition-card {
+    display: flex;
+    align-items: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    gap: 20px;
+}
+
+.macro-ring-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+}
+.macro-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+.macro-ring circle {
+    fill: transparent;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+}
+.ring-track {
+    stroke: var(--bg-surface);
+}
+.ring-protein { stroke: var(--accent-slate); }
+.ring-carbs { stroke: var(--accent-teal); }
+.ring-fat { stroke: var(--accent-navy); }
+
+.ring-content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.total-calories {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.1;
+}
+.calories-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+.nutrition-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.macro-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.macro-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.macro-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.protein-dot { background-color: var(--accent-slate); }
+.carbs-dot { background-color: var(--accent-teal); }
+.fat-dot { background-color: var(--accent-navy); }
+
+.macro-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+.macro-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.macro-target {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 400;
+}
+
+.net-balance {
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-subtle);
+}
+.net-value {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--accent-teal);
+    line-height: 1.2;
+}
+.net-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* 3. Detailed Workouts & Garmin Connect */
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.section-header-row .section-title {
+    margin-bottom: 0;
+}
+.workout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.workout-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+}
+
+.workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.workout-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.workout-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--bg-primary);
+}
+.run-bg { background-color: var(--accent-teal); }
+.strength-bg { background-color: var(--accent-slate); }
+
+.workout-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.workout-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.workout-meta {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.te-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 8px;
+    color: var(--bg-primary);
+}
+.aerobic-te { background-color: var(--accent-teal); }
+.anaerobic-te { background-color: var(--accent-navy); }
+
+.workout-metrics {
+    display: flex;
+    justify-content: space-between;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 12px 16px;
+}
+.grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+}
+
+.metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.metric-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.metric-unit {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+}
+
+.metric-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.workout-content-split {
+    display: flex;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    align-items: center;
+}
+
+.muscle-map {
+    width: 140px;
+    height: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.anatomy-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+/* Muscle Focus Pills */
+.workout-data-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 12px;
+}
+.strength-metrics {
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-subtle);
+}
+.workout-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 16px 16px 16px;
+}
+.focus-pill {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    font-size: 10px;
+    padding: 4px 8px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.summary-count {
+    color: var(--accent-slate);
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px dashed var(--border-subtle);
+}
+
+/* 4. Training Load Status */
+.load-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
+.load-title {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.load-status-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--status-yellow);
+}
+
+.gauge-container {
+    position: relative;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, var(--status-green) 0%, var(--status-yellow) 65%, var(--status-red) 100%);
+    margin-bottom: 12px;
+}
+.gauge-pointer {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    background-color: var(--bg-primary);
+    border: 3px solid var(--status-yellow);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: left 0.3s ease;
+}
+
+.gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+/* 5. The "Coach" Commentary */
+.coach-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    text-transform: none;
+    font-size: 16px;
+    letter-spacing: 0;
+}
+.icon-sparkle {
+    width: 16px;
+    height: 16px;
+    color: var(--accent-teal);
+}
+.coach-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+}
+.insight-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.insight-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+}
+.insight-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+.separator {
+    height: 1px;
+    background-color: var(--bg-surface);
+    margin: 16px 0;
+}
+
+/* 6. Expandable Workout Details */
+.workout-details {
+    margin-top: 12px;
+    border-top: 1px dashed var(--border-subtle);
+    padding-top: 8px;
+}
+
+.workout-details-summary {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0 8px 0;
+    outline: none;
+    transition: color 0.2s ease;
+}
+
+.workout-details-summary:hover {
+    color: var(--accent-teal);
+}
+
+.workout-details-summary::-webkit-details-marker {
+    display: none;
+}
+
+.workout-log {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 4px;
+    background: transparent;
+}
+
+.exercise-log-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.exercise-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.exercise-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.exercise-table-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+}
+
+.exercise-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 11px;
+    color: var(--text-primary);
+    border-bottom: 1px dashed var(--border-subtle);
+}
+
+.exercise-row:last-child {
+    border-bottom: none;
+}
+
+.set-number {
+    font-weight: 600;
+    color: var(--text-secondary);
+    width: 24px;
+}
+
+.set-weight {
+    font-weight: 500;
+    color: var(--text-primary);
+    flex: 1;
+    text-align: center;
+}
+
+.set-reps {
+    font-weight: 600;
+    color: var(--accent-teal);
+    width: 32px;
+    text-align: right;
+}
+
+/* 7. Strava Details Grid */
+.strava-log {
+    margin-top: 4px;
+}
+
+.strava-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 24px;
+    padding: 4px 8px;
+}
+
+.strava-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border-subtle);
+}
+
+.strava-stat:nth-last-child(-n+2):nth-child(odd):last-child,
+.strava-stat:nth-last-child(-n+2):not(:nth-child(odd):last-child) {
+    border-bottom: none;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-unit {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-tertiary);
 }
