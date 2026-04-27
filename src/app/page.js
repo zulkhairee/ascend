@@ -147,8 +147,59 @@ function formatPace(metersPerSecond) {
   return `${mins}:${secs.toString().padStart(2, '0')} /km`;
 }
 
+async function getAIInsights(workouts) {
+  const apiKey = getEnv('GEMINI_API_KEY');
+  if (!apiKey || apiKey === 'REPLACE_WITH_YOUR_GEMINI_API_KEY') {
+    return "Please add your Gemini API Key to CREDENTIALS_BACKUP.md to enable AI insights.";
+  }
+
+  const workoutSummary = workouts.map(w => ({
+    type: w.type,
+    title: w.title,
+    date: w.date.toLocaleDateString(),
+    metrics: w.type === 'cardio' ? {
+      distance: formatDistance(w.distance) + 'km',
+      duration: formatDuration(w.duration),
+      hr: w.heartRate
+    } : {
+      volume: w.volume,
+      exercises: w.exercises,
+      duration: formatDuration(w.duration)
+    }
+  }));
+
+  const prompt = `You are a professional fitness coach named Ascend AI. 
+Analyze the following 3 recent workouts and provide a concise, encouraging performance insight (max 3 sentences). 
+Focus on consistency, volume, or cardio pace.
+
+Workouts:
+${JSON.stringify(workoutSummary, null, 2)}
+
+Provide your response in plain text.`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      }),
+      next: { revalidate: 3600 } // cache for 1 hour
+    });
+
+    if (!res.ok) throw new Error('Gemini API error');
+    
+    const data = await res.json();
+    return data.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error("AI Insight Error:", error);
+    return "I'm having trouble analyzing your stats right now. Keep pushing!";
+  }
+}
+
 export default async function Home() {
   const recentWorkouts = await getWorkouts();
+  const aiInsights = await getAIInsights(recentWorkouts);
 
   return (
     <div className="app-container">
@@ -375,7 +426,7 @@ export default async function Home() {
         <div className="coach-card">
           <div className="insight-block">
             <h4 className="insight-label">System Status</h4>
-            <p className="insight-text">Successfully mapped and harmonized real-time data from Lyfta and Strava APIs. Your data pipelines are flowing beautifully!</p>
+            <p className="insight-text">{aiInsights}</p>
           </div>
         </div>
       </section>

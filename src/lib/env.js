@@ -21,11 +21,12 @@ export function getEnv(key) {
       // Matches pattern: - **Key Name**: `value`
       // We map our environment keys to the human-readable names in the MD
       const keyMap = {
-        'STRAVA_CLIENT_ID': 'Client ID',
-        'STRAVA_CLIENT_SECRET': 'Client Secret',
-        'STRAVA_ACCESS_TOKEN': 'Access Token',
-        'STRAVA_REFRESH_TOKEN': 'Refresh Token',
-        'LYFTA_API_KEY': 'API Key'
+        'STRAVA_CLIENT_ID': 'Strava Client ID',
+        'STRAVA_CLIENT_SECRET': 'Strava Client Secret',
+        'STRAVA_ACCESS_TOKEN': 'Strava Access Token',
+        'STRAVA_REFRESH_TOKEN': 'Strava Refresh Token',
+        'LYFTA_API_KEY': 'Lyfta API Key',
+        'GEMINI_API_KEY': 'Gemini API Key'
       };
 
       const label = keyMap[key];
