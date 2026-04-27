@@ -1,5 +1,6 @@
 import { Mic, MessageCircle, Footprints, Dumbbell, Sparkles } from "lucide-react";
 import MuscleMap from "../components/MuscleMap";
+import { getEnv } from "../lib/env";
 
 function parseLyftaMuscles(exercises) {
   const muscleData = [];
@@ -31,7 +32,7 @@ function parseLyftaMuscles(exercises) {
 async function getWorkouts() {
   // 1. Fetch from Lyfta
   const lyftaRes = await fetch('https://my.lyfta.app/api/v1/workouts', {
-    headers: { Authorization: `Bearer ${process.env.LYFTA_API_KEY}` },
+    headers: { Authorization: `Bearer ${getEnv('LYFTA_API_KEY')}` },
     next: { revalidate: 0 } // always fetch fresh data
   });
   
@@ -55,7 +56,7 @@ async function getWorkouts() {
 
   // 2. Fetch from Strava (Summary)
   const stravaRes = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=5', {
-    headers: { Authorization: `Bearer ${process.env.STRAVA_ACCESS_TOKEN}` },
+    headers: { Authorization: `Bearer ${getEnv('STRAVA_ACCESS_TOKEN')}` },
     next: { revalidate: 0 }
   });
   
@@ -66,7 +67,7 @@ async function getWorkouts() {
       // 2.5 Fetch Detailed Activities to get the exact 'calories' field (missing from summary)
       const detailedPromises = stravaSummary.map(w => 
         fetch(`https://www.strava.com/api/v3/activities/${w.id}`, {
-          headers: { Authorization: `Bearer ${process.env.STRAVA_ACCESS_TOKEN}` },
+          headers: { Authorization: `Bearer ${getEnv('STRAVA_ACCESS_TOKEN')}` },
           next: { revalidate: 0 }
         }).then(res => res.json())
       );
