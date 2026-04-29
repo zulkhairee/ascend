@@ -223,6 +223,25 @@ To avoid data duplication (since Garmin usually syncs *to* Strava), the app's ha
 
 ---
 
+### Session 7: Technical Audit & Multi-Device Governance
+*April 30, 2026 • 00:05*
+
+**Goal:** Secure the project's longevity through a rigorous technical audit and establish safe working protocols for multi-device development.
+
+### The Omni-Audit
+Performed a comprehensive review of the codebase, resulting in `TECHNICAL_AUDIT.md`:
+- **Risk ID**: Identified the 6-hour Strava OAuth window as a "P0" failure point.
+- **Architecture**: Flagged "Network Boundary" inefficiencies where AI insights were fetched client-side redundantly.
+- **Scalability**: Noted the "N+1" fetch problem in Strava detailed activity retrieval.
+
+### Multi-Device Sync Protocol
+Established a governance system in `AGENTS.md` to manage work across personal and work laptops:
+- **Hostname-based Identity**: Personal laptop (`Zulkhairees-MacBook-Air.local`) is the primary source of truth.
+- **Push Restrictions**: AI is prohibited from auto-pushing on work machines without explicit consent.
+- **Commit Receipts**: All work-machine commits must be tagged `[Work-Machine]` for traceability.
+
+---
+
 ### Updated File Structure
 ```
 ascend-web/
@@ -232,17 +251,11 @@ ascend-web/
 │   │   │   └── insights/
 │   │   │       └── route.js      # Serves AI insight from static JSON
 │   │   ├── page.js               # Main server component (data fetching + layout)
-│   │   ├── layout.js             # Root layout with Inter font
-│   │   └── globals.css           # Full design system + shimmer skeleton styles
-│   ├── components/
-│   │   ├── MuscleMap.js          # Client component: SVG muscle heatmap
-│   │   └── InsightsPanel.js      # Client component: async AI insights with skeleton loader
-│   ├── data/
-│   │   └── ai_insight.json       # Static AI coaching analysis (updated by Antigravity)
-│   └── lib/
-│       └── env.js                # Smart credential loader (env.local → CREDENTIALS_BACKUP.md fallback)
+│   │   └── ...
 ├── public/
 │   └── ascend_logo.png
+├── AGENTS.md                     # AI instructions & Multi-device Git Policy
+├── TECHNICAL_AUDIT.md            # Deep-dive risk & architecture analysis
 ├── CREDENTIALS_BACKUP.md         # Local-only API key backup (gitignored)
 ├── implementation_plan.md        # Living technical roadmap
 └── .env.local                    # API keys (gitignored)
