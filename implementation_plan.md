@@ -67,11 +67,23 @@ This is the living technical document for the Ascend fitness dashboard. It captu
 
 **InsightsPanel** (`src/components/InsightsPanel.js`): A `'use client'` component with animated shimmer skeleton loader while the API route responds.
 
+### 🏗️ Phase 6 — Multi-Source Cardio (Garmin Connect + Strava)
+*Planned / Strategic Shift*
+- **Goal**: Transition Garmin Connect to the primary source for cardio data due to superior physiological metrics (Recovery, Training Load, Sleep).
+- **Strategy**: Implement a "Provider-Agnostic" cardio layer.
+- **De-duplication Logic**: Match Garmin and Strava activities by timestamp; prioritize Garmin data to avoid duplicates.
+- **Auth Strategy**: Use unofficial Garmin Connect credentials (Username/Password) stored in `.env.local` as Garmin lacks a public hobbyist OAuth API.
+- **Fallback**: If Garmin credentials are missing or data fails, the system automatically defaults to Strava.
+
 ---
 
 ## Active Roadmap
 
 ### 🔴 High Priority
+
+#### Garmin Connect Integration (New)
+- **Goal**: Swap Strava for Garmin as the primary cardio driver.
+- **Plan**: Integrate a Node.js Garmin wrapper; map rich metrics like Recovery Time and Body Battery to the UI.
 
 #### Auto Token Refresh (Strava)
 - **Problem**: Strava access tokens expire every 6 hours, causing silent API failures.

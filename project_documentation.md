@@ -200,6 +200,29 @@ The AI Insights section went through three design iterations:
 **Current insight (as of Apr 27, 2026):**
 > *"Your strength is trending upward — your Arms session on Apr 23 hit 5,665 kg total volume, up 15.6% from your Apr 15 session at 4,892 kg. On the cardio side, both your 7 km run and 11.72 km trail run averaged over 175 bpm — consider adding a Zone 2 easy run this week. Consistency is your strongest asset right now; just make sure you're getting enough sleep to let it all compound."*
 
+### Session 6: The Strategic Pivot — Garmin as Primary Source
+*April 29, 2026 • 23:55*
+
+**Goal:** Upgrade the cardio data layer by making Garmin Connect the primary "Source of Truth," while retaining Strava as a resilient fallback.
+
+### Why Garmin?
+While Strava is excellent for social sharing and basic GPS tracking, it lacks the deep physiological metrics provided by Garmin's ecosystem:
+- **Recovery Time**: Knowing exactly how many hours to rest between sessions.
+- **Training Effect**: Understanding if a run was Aerobic or Anaerobic.
+- **Health Snapshots**: Incorporating Resting HR and Stress into AI coaching.
+
+### The Multi-Provider Architecture
+To avoid data duplication (since Garmin usually syncs *to* Strava), the app's harmonization engine will be updated to follow a **Priority Hierarchy**:
+1. **Garmin (Primary)**: If Garmin data exists for a specific time, use it for all metrics.
+2. **Strava (Fallback)**: If Garmin is unavailable (e.g., user forgot their watch but logged via phone), use Strava.
+3. **Deduplication**: Match by activity start time (timestamp). If `Garmin.time == Strava.time`, discard the Strava entry.
+
+### Technical Implementation Requirements
+- **Authentication**: Switch from OAuth (Strava) to Credential-based login (Garmin) via `.env.local`.
+- **Mapping**: Normalize Garmin's "Activity" JSON into our unified `Workout` schema.
+
+---
+
 ### Updated File Structure
 ```
 ascend-web/
