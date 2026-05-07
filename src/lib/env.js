@@ -26,7 +26,9 @@ export function getEnv(key) {
         'STRAVA_ACCESS_TOKEN': 'Strava Access Token',
         'STRAVA_REFRESH_TOKEN': 'Strava Refresh Token',
         'LYFTA_API_KEY': 'Lyfta API Key',
-        'GEMINI_API_KEY': 'Gemini API Key'
+        'GEMINI_API_KEY': 'Gemini API Key',
+        'GARMIN_USERNAME': 'Garmin Username',
+        'GARMIN_PASSWORD': 'Garmin Password'
       };
 
       const label = keyMap[key];

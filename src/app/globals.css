@@ -738,3 +738,96 @@ body {
     color: var(--status-red);
     font-size: 13px;
 }
+
+/* 9. Premium Dark Health Widget */
+.premium-dark {
+    background: linear-gradient(145deg, #1A1D23, #111317);
+    color: #F8FAFC;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.health-section {
+    margin-bottom: 32px;
+}
+
+.health-card {
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.health-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.health-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.health-item:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.health-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bb-icon {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.rt-icon {
+    background: rgba(245, 158, 11, 0.15);
+    color: #F59E0B;
+}
+
+.tr-icon {
+    background: rgba(20, 184, 166, 0.15);
+    color: #14B8A6;
+}
+
+.health-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.health-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.health-value {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #FFFFFF;
+}
+
+.health-unit {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: 2px;
+}
+
+.health-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+}

@@ -291,4 +291,48 @@ All keys can be supplied via `.env.local` or `CREDENTIALS_BACKUP.md` (drag-and-d
 | 🟡 Medium | Nutrition × AI integration | Future: AI insights will also incorporate daily food intake and macro adherence |
 | 🟢 Low | Webhooks | Replace polling with Strava/Lyfta webhook push notifications |
 | 🟢 Low | Historical analytics | Weekly/monthly volume charts using Recharts or Chart.js |
-| 🟢 Low | Zone 2 vs threshold tagging | Auto-classify runs by HR zone for more specific coaching |
+---
+
+## Session 8: Garmin Source-of-Truth Transition
+*May 7, 2026 • 23:28*
+
+**Goal:** Integrate Garmin Connect as the primary data source for physiological and cardio data, ensuring highly accurate telemetry and new health metrics.
+
+### Key Achievements
+- **Garmin Integration**: Established secure session management with Garmin Connect.
+- **Health Status Widget**: Introduced a premium dark-mode widget displaying **Body Battery**, **Recovery Time**, and **Readiness**.
+- **Data Harmonization (Garmin-First)**:
+    - Garmin data now supersedes Strava for cardio metrics.
+    - Implemented **Unix Timestamp (±2 min)** matching to "stitch" Strava social titles and metadata onto Garmin telemetry.
+    - Fixed classification bugs where treadmill runs were mislabeled as strength.
+- **Server-Side Performance**: 
+    - Migrated AI Insights fetching from client-side to server-side, removing shimmer-loader lag.
+    - Implemented a robust local JSON cache (`data_cache.json`) to bypass API rate limits.
+- **AI Coaching Update**: Updated insights to handle decoupled sessions (e.g., Run + Strength on the same day) and provide specific recovery advice based on Garmin's Training Effect scores.
+
+### Technical Deliverables
+- [x] `src/lib/garmin.js`: Session manager & activity fetcher.
+- [x] `src/lib/cache.js`: Persistent JSON caching layer.
+- [x] `src/components/HealthStatus.js`: Premium UI component.
+- [x] Refactored `src/app/page.js` & `src/components/InsightsPanel.js`.
+
+---
+
+### Updated File Structure
+```
+ascend-web/
+├── src/
+│   ├── app/
+│   │   ├── page.js               # Main server component (Garmin-first logic)
+│   │   └── ...
+│   ├── components/
+│   │   ├── HealthStatus.js       # New: Garmin Health metrics widget
+│   │   ├── InsightsPanel.js      # Refactored: Prop-based server rendering
+│   │   └── ...
+│   ├── lib/
+│   │   ├── garmin.js             # New: Garmin Connect session manager
+│   │   ├── cache.js              # New: Local JSON caching utility
+│   │   └── ...
+├── data_cache.json               # Local data cache (ignored by git)
+├── ...
+```

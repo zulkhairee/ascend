@@ -1,27 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
-export default function InsightsPanel() {
-  const [insight, setInsight] = useState(null);
-  const [label, setLabel] = useState('Ascend AI');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/insights')
-      .then(res => res.json())
-      .then(data => {
-        setInsight(data.insight);
-        setLabel(data.label || 'Ascend AI');
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
-  }, []);
+export default function InsightsPanel({ insight, label = 'Ascend AI' }) {
+  const loading = !insight;
+  const error = insight && insight.includes('Could not reach');
 
   return (
     <section className="section coach-section">
@@ -40,7 +23,7 @@ export default function InsightsPanel() {
             </div>
           ) : error ? (
             <p className="insight-text insight-error">
-              Could not reach Ascend AI. Check your API key and try refreshing.
+              {insight}
             </p>
           ) : (
             <p className="insight-text">{insight}</p>
