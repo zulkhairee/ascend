@@ -36,6 +36,7 @@ CREDENTIALS_BACKUP.md
 
 # vercel
 .vercel
+data_cache.json
 
 # typescript
 *.tsbuildinfo
